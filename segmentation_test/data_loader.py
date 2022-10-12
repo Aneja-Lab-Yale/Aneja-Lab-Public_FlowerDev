@@ -27,7 +27,7 @@ def demo_train_val_test():
 Adapted from U-Net Image Segmentation in Keras https://pyimagesearch.com/2022/02/21/u-net-image-segmentation-in-keras/
 Author: Margaret Maynard-Reid
 
-This code is used to build out the data for out U-net model
+This code is used to build out the data for our U-net model
 """
 
 
