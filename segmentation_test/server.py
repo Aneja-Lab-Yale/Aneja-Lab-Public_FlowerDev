@@ -2,17 +2,11 @@
 U-NET TEST SERVER
 """
 
-import glob
-import os.path
 import flwr as fl
 from typing import Dict, Optional, Tuple
-from pathlib import Path
 from seg_models import build_unet
 from data_loader import demo_train_val_test
 import argparse
-from sklearn.metrics import roc_auc_score, f1_score
-import pandas as pd
-import csv
 
 parser = argparse.ArgumentParser(
     description='Run Federated Experiment with inputs: # of clients ( --clients ) , Aggregation strategy ( --strat ), Data Distribution (--dist) ')
@@ -85,7 +79,7 @@ def get_evaluate_fn(model):
         model.set_weights(parameters)  # Update model with the latest parameters
         loss, accuracy = model.evaluate(test)
 
-        metrics = {"accuracy": accuracy, 'loss': loss}
+        metrics = {"accuracy": float(accuracy), 'loss': float(loss)}
 
         return loss, metrics
 

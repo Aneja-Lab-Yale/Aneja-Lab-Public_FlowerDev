@@ -37,28 +37,29 @@ class FlwrClient(fl.client.NumPyClient):
 
         self.model.set_weights(parameters)
         history = self.model.fit(
-            self.x_train[:2500],
-            self.y_train[:2500],
-            batch_size,
-            epochs,
+            self.x_train[:2500],  # TODO
+            self.y_train[:2500],  # TODO
+            config["batch_size"],
+            config["local_epochs"],
             validation_split=0.1,
         )
 
         # Return updated model parameters and results
         parameters_prime = self.model.get_weights()
-        num_examples_train = len(self.x_train)
+        num_examples_train = len(self.x_train)  # TODO x_train
         results = {
-            "loss": history.history["loss"][0],
-            "accuracy": history.history["accuracy"][0],
-            "val_loss": history.history["val_loss"][0],
-            "val_accuracy": history.history["val_accuracy"][0],
+            "loss": float(history.history["loss"][0]),
+            "accuracy": float(history.history["accuracy"][0]),
+            "val_loss": float(history.history["val_loss"][0]),
+            "val_accuracy": float(history.history["val_accuracy"][0]),
         }
         return parameters_prime, num_examples_train, results
 
     def evaluate(self, parameters, config):
         self.model.set_weights(parameters)
-        loss, acc = model.evaluate(self.x_train[2501:], self.y_train[2501:], verbose=2)
-        return loss, len(test), {"accuracy": acc}
+        # TODO use config["val_steps"] ?
+        loss, acc = self.model.evaluate(self.x_train[2501:], self.y_train[2501:], verbose=2)  # TODO x_train/y_train
+        return loss, len(self.val), {"accuracy": acc}
 
 def client_fn(cid: str) -> fl.client.Client:
     # Load model
@@ -69,7 +70,7 @@ def client_fn(cid: str) -> fl.client.Client:
 
     print(f'~~~~~~~~~~~~~~~~~~~Client:{cid}~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-    print(f'x:{len(x_train)}  y:{len(y_train)}')
+    print(f'x:{len(x_train)}  y:{len(y_train)}')  # TODO x_train/y_train
     # Create and return client
     return client
 
