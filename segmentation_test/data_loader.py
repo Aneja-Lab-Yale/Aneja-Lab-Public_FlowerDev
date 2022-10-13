@@ -1,11 +1,8 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-import seaborn as sns
-from itertools import permutations
-from typing import Tuple, List, cast
+from typing import List, cast
 import tensorflow as tf
-import random
 import tensorflow_datasets as tfds
 
 

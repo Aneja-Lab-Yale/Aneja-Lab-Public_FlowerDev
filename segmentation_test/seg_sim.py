@@ -130,12 +130,13 @@ class SaveModelStrategy(strats[argparse.strat]):
         failures
     ):
 
-        aggregated_weights = super().aggregate_fit(rnd, results, failures)
-        if aggregated_weights is not None:
+        parameters_aggregated, metrics_aggregated = super().aggregate_fit(rnd, results, failures)
+        if parameters_aggregated, metrics_aggregated is not None:
+            aggregated_weights = fl.common.parameters_to_ndarrays(parameters_aggregated)
             # Save aggregated_weights
             print(f"Saving round {rnd} aggregated_weights...")
             np.savez(f"weights/round-{rnd}-weights.npz", *aggregated_weights)
-        return aggregated_weights
+        return parameters_aggregated, metrics_aggregated
 
     def evaluate_config(self,rnd: int):
         """Return evaluation configuration dict for each round.
@@ -146,6 +147,9 @@ class SaveModelStrategy(strats[argparse.strat]):
         val_steps = 5 if rnd < 4 else 10
         return {"val_steps": val_steps}
 
+    # NOTE:
+    # The same outcome can now be achieved with metric aggregation functions.
+    # See quickstart_pytorch for a simple code example.
     def aggregate_evaluate(self,
                            rnd,
                            results,
@@ -161,7 +165,9 @@ class SaveModelStrategy(strats[argparse.strat]):
         accuracy_aggregated = sum(accuracies) / sum(examples)
         print(f"Round {rnd} accuracy aggregated from client results: {accuracy_aggregated}")
         # Call aggregate_evaluate from base class (FedAvg)
-        return super().aggregate_evaluate(rnd, results, failures)
+        loss_aggregated, metrics_aggregated = super().aggregate_evaluate(rnd, results, failures)
+        metrics_aggregated["accuracy"] = accuracy_aggregated
+        return loss_aggregated, metrics_aggregated
 
 
 def main() -> None:
